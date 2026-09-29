@@ -1,0 +1,7 @@
+# Union of Weeks 1-4's requirements.txt files.
+# Install this once if you'd rather have one environment for the whole
+# course instead of a separate venv per week.
+numpy
+opencv-python
+torch
+matplotlib
