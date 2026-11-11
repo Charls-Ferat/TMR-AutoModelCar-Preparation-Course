@@ -1,32 +1,3 @@
-/*
-  ============================================================================
-  STUDENT TOOLBOX -- MBot MegaPi line follower on FreeRTOS
-  ============================================================================
-  Everything LOW-LEVEL is already done for you and ready to call:
-    - the UART wire protocol (framing, CRC, packet decoding)
-    - motor primitives (motorForwardLeftRun, stopMotors, lineFollowDrive, ...)
-    - the 1ms hardware timer and packet-age watchdog helpers
-    - mapValue / constrainValue / applyDeadzone
-
-  Your job is to assemble these into a working FreeRTOS system by filling
-  in the five "TODO" spots below. As shipped, this sketch COMPILES and
-  RUNS SAFELY (the car just sits still blinking nothing) -- you are
-  building up real behavior piece by piece, not debugging a blank page.
-
-  Read the top-level README.md first -- it explains the task graph you're
-  building (UART -> shared packet -> Motion -> motors, Safety watchdog,
-  Collision override) before you touch any TODO.
-
-  Stuck? ../instructor_reference_mbot_firmware/ has a complete, working
-  version of this exact exercise with teaching comments -- use it to
-  check your work, not to skip the exercise.
-
-  Hardware note: MeNewRGBLed.h/.cpp and MeCollisionSensor.h/.cpp are your
-  own Makeblock MegaPi wrapper classes -- copy them into this sketch's
-  src/ folder (see src/README.md).
-  ============================================================================
-*/
-
 #include <Arduino_FreeRTOS.h>
 #include <task.h>
 #include <event_groups.h>
@@ -43,7 +14,6 @@
 #include "src/MeCollisionSensor.h"
 #include <MeMegaPi.h>
 
-// ======================= Constants (ready to use) ===========================
 // UART protocol: [SYNC][SPEED][STEER][FLAGS][CRC]
 #define BAUD_RATE               115200
 #define SYNC_BYTE               0xAA
@@ -64,8 +34,7 @@
 #define EVENT_COLLISION         (1 << 0)
 #define EVENT_COMMS_OK          (1 << 1)
 
-// ======================= Shared data (ready to use) ==========================
-
+// ---- Shared data -----
 typedef struct {
   uint8_t speed;
   int8_t steer;
@@ -159,7 +128,7 @@ int16_t applyDeadzone(int16_t value) {
   return value;
 }
 
-// ======================= Motor primitives (ready to use) ======================
+// Motor primitives
 // Plain functions, no FreeRTOS involved -- call these only while holding
 // motorMutex once you're inside a task.
 
@@ -228,8 +197,8 @@ void lineFollowDrive(int16_t speed, int8_t steer) {
   motorBackRightRun(rightSpeed);
 }
 
-// ======================= UART (ready to use) ===================================
 
+// UART sequences
 void UART_init(void) {
   UCSR0A = (1 << U2X0);
 
@@ -260,7 +229,6 @@ uint8_t UART_readByte(void) {
 }
 
 // ======================= Packet decoder (ready to use) ==========================
-
 uint8_t computeCRC(const uint8_t *data, uint8_t length) {
   uint8_t crc = 0;
 
@@ -324,7 +292,6 @@ bool receivePacket(Packet *packet) {
 }
 
 // ======================= 1ms hardware timer (ready to use) =======================
-
 void setupTimer3_1ms() {
   cli();
 
