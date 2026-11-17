@@ -15,7 +15,7 @@
 #include <MeMegaPi.h>
 
 // UART protocol: [SYNC][SPEED][STEER][FLAGS][CRC]
-#define BAUD_RATE               115200
+#define BAUD_RATE               96000
 #define SYNC_BYTE               0xAA
 #define PACKET_SIZE             5
 #define COMM_TIMEOUT_MS         500UL     // no valid packet this long -> treat host as gone
